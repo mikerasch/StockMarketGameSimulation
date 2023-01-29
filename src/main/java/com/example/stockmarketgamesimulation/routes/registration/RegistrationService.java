@@ -1,5 +1,6 @@
 package com.example.stockmarketgamesimulation.routes.registration;
 
+import com.example.stockmarketgamesimulation.repo.UserRepository;
 import com.example.stockmarketgamesimulation.security.Users;
 import com.example.stockmarketgamesimulation.utility.ResponseHandler;
 import org.springframework.http.HttpStatus;
@@ -11,18 +12,18 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class RegistrationService {
 
-    private final RegistrationRepository registrationRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    public RegistrationService(RegistrationRepository registrationRepository, PasswordEncoder passwordEncoder){
-        this.registrationRepository = registrationRepository;
+    public RegistrationService(UserRepository userRepository, PasswordEncoder passwordEncoder){
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
     public ResponseEntity<Object> registerNewUser(UserDTO userDTO) {
-        if(registrationRepository.existsByUsername(userDTO.getUsername())){
+        if(userRepository.existsByUsername(userDTO.getUsername())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Username is already taken.");
         }
 
-        if(registrationRepository.existsByEmail(userDTO.getEmail())){
+        if(userRepository.existsByEmail(userDTO.getEmail())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Email is already taken.");
         }
         Users users = new Users();
@@ -34,7 +35,7 @@ public class RegistrationService {
         users.setCountry(userDTO.getCountry());
         users.setAge(userDTO.getAge());
 
-        registrationRepository.save(users);
+        userRepository.save(users);
         return ResponseHandler.generateResponse("Success","User added successfully",HttpStatus.OK);
     }
 }
