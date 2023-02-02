@@ -1,5 +1,6 @@
 package com.example.stockmarketgamesimulation.routes.registration;
 
+import com.example.stockmarketgamesimulation.dto.UserDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

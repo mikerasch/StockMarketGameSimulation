@@ -1,5 +1,6 @@
 package com.example.stockmarketgamesimulation.routes.stocks;
 
+import com.example.stockmarketgamesimulation.dto.StockStatsDTO;
 import com.example.stockmarketgamesimulation.repo.BasicStockRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +22,11 @@ public class StockService {
         return new ResponseEntity<>(basicStockInformationList,HttpStatus.OK);
     }
 
-    public ResponseEntity<String> getPriceFromTicker(String ticker) {
+    public ResponseEntity<StockStatsDTO> getPriceFromTicker(String ticker) {
         if(!basicStockRepository.existsBySymbolIgnoreCase(ticker)){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Stock ticker could not be found!");
         }
-        String result = stockAPIService.getQuoteFromTicker(ticker);
+        StockStatsDTO result = stockAPIService.getQuoteFromTicker(ticker);
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 }

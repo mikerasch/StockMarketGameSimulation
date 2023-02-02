@@ -20,10 +20,13 @@ public class WebSecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserDetailsImpl userDetails;
-    public WebSecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,UserDetailsImpl userDetails){;
+
+    public WebSecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, UserDetailsImpl userDetails) {
+        ;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.userDetails = userDetails;
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -41,6 +44,7 @@ public class WebSecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable(); // for h2 database currently
@@ -48,8 +52,8 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests(auth ->
                 auth.requestMatchers("/register/**").permitAll()
                         .requestMatchers("/login/**").permitAll()
-                .requestMatchers("/error").permitAll()
-                .anyRequest().authenticated());
+                        .requestMatchers("/error").permitAll()
+                        .anyRequest().authenticated());
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.authenticationProvider(this.authenticationProvider());
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

@@ -1,4 +1,5 @@
 package com.example.stockmarketgamesimulation.routes.stocks;
+import com.example.stockmarketgamesimulation.dto.StockStatsDTO;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +22,7 @@ public class StockController {
         return stockService.getAllListings();
     }
     @GetMapping(value = "/ticker", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getPriceFromTicker(@RequestHeader String ticker){
+    public ResponseEntity<StockStatsDTO> getPriceFromTicker(@RequestHeader String ticker){
         return stockService.getPriceFromTicker(ticker);
     }
 }

@@ -1,5 +1,6 @@
-package com.example.stockmarketgamesimulation.security;
+package com.example.stockmarketgamesimulation.routes.users;
 
+import com.example.stockmarketgamesimulation.security.Roles;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,6 +28,7 @@ public class Users implements UserDetails {
     private String password;
     private String email;
     private String country;
+    private BigDecimal balance;
     private int age;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

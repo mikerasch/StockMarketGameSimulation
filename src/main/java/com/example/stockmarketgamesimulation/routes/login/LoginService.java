@@ -1,7 +1,7 @@
 package com.example.stockmarketgamesimulation.routes.login;
 
 import com.example.stockmarketgamesimulation.repo.UserRepository;
-import com.example.stockmarketgamesimulation.security.Users;
+import com.example.stockmarketgamesimulation.routes.users.Users;
 import com.example.stockmarketgamesimulation.security.config.JwtService;
 import com.example.stockmarketgamesimulation.utility.ResponseHandler;
 import org.springframework.http.HttpStatus;

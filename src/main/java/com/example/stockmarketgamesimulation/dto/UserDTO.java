@@ -1,4 +1,4 @@
-package com.example.stockmarketgamesimulation.routes.registration;
+package com.example.stockmarketgamesimulation.dto;
 
 import lombok.Data;
 

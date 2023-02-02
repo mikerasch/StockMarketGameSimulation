@@ -1,7 +1,7 @@
 package com.example.stockmarketgamesimulation.security.config;
 
 import com.example.stockmarketgamesimulation.repo.UserRepository;
-import com.example.stockmarketgamesimulation.security.Users;
+import com.example.stockmarketgamesimulation.routes.users.Users;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

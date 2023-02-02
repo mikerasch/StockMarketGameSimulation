@@ -1,6 +1,6 @@
 package com.example.stockmarketgamesimulation.repo;
 
-import com.example.stockmarketgamesimulation.security.Users;
+import com.example.stockmarketgamesimulation.routes.users.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<Users,Long> {

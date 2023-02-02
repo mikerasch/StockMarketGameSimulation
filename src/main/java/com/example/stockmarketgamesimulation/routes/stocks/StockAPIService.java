@@ -1,7 +1,7 @@
 package com.example.stockmarketgamesimulation.routes.stocks;
 
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
+import com.example.stockmarketgamesimulation.dto.GlobalQuoteWrapper;
+import com.example.stockmarketgamesimulation.dto.StockStatsDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -39,15 +39,20 @@ public class StockAPIService {
             basicStockInformation.setIpoDate(parseLine[4]);
             basicStockInformation.setDelistingDate(parseLine[5]);
             basicStockInformation.setStatus(parseLine[6]);
+
             basicStockInformationList.add(basicStockInformation);
         }
         return basicStockInformationList;
     }
 
-    public String getQuoteFromTicker(String ticker) {
+    public StockStatsDTO getQuoteFromTicker(String ticker) {
         String url = BASE_URL + "GLOBAL_QUOTE&symbol=" + ticker + "&apikey=" + API_KEY;
         RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.getForObject(BASE_URL + "GLOBAL_QUOTE&symbol=" + ticker + "&apikey=" + API_KEY, String.class);
-        return result;
+        ResponseEntity<GlobalQuoteWrapper> response =
+                restTemplate.getForEntity(
+                        url,
+                        GlobalQuoteWrapper.class
+                );
+        return response.getBody().getStockStatsDTO();
     }
 }
