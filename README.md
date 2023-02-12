@@ -18,3 +18,5 @@
   - Obviously could not do this by web scraping since API limitations and websites will not like it.
 - Ability to sell shares (obviously a priority)
 - Historical Data which would allow to show an overall market trend.
+- Add testing
+  - Realistically, this should be done last as there are a lot of moving parts and I am the only one working on this.
