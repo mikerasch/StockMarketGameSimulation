@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BasicStockRepository extends JpaRepository<BasicStockInformation,Long> {
     boolean existsBySymbolIgnoreCase(String ticker);
+    BasicStockInformation findBySymbolIgnoreCase(String ticker);
 }

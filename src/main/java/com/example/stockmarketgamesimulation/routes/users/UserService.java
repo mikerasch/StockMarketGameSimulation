@@ -1,9 +1,14 @@
 package com.example.stockmarketgamesimulation.routes.users;
 
 import com.example.stockmarketgamesimulation.dto.StockPurchaseSheetDTO;
+import com.example.stockmarketgamesimulation.dto.StockStatsDTO;
+import com.example.stockmarketgamesimulation.dto.UserStockDTO;
 import com.example.stockmarketgamesimulation.repo.BasicStockRepository;
 import com.example.stockmarketgamesimulation.repo.UserRepository;
+import com.example.stockmarketgamesimulation.repo.UserStockRepository;
+import com.example.stockmarketgamesimulation.routes.stocks.BasicStockInformation;
 import com.example.stockmarketgamesimulation.routes.stocks.StockAPIService;
+import com.example.stockmarketgamesimulation.routes.stocks.UserStock;
 import com.example.stockmarketgamesimulation.utility.ResponseHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,16 +17,20 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
     private final BasicStockRepository basicStockRepository;
     private final StockAPIService stockAPIService;
-    public UserService(UserRepository userRepository, BasicStockRepository basicStockRepository, StockAPIService stockAPIService){
+    private final UserStockRepository userStockRepository;
+    public UserService(UserRepository userRepository, BasicStockRepository basicStockRepository, StockAPIService stockAPIService, UserStockRepository userStockRepository){
         this.userRepository = userRepository;
         this.basicStockRepository = basicStockRepository;
         this.stockAPIService = stockAPIService;
+        this.userStockRepository = userStockRepository;
     }
     public ResponseEntity<Object> getCurrentBalance(Principal principal) {
         String username = principal.getName();
@@ -33,7 +42,8 @@ public class UserService {
     public ResponseEntity<Object> purchaseStock(StockPurchaseSheetDTO stockPurchaseSheetDTO,Principal principal) {
         String ticker = stockPurchaseSheetDTO.getTicker();
         int amountOfShares = Integer.parseInt(stockPurchaseSheetDTO.getAmountOfShares());
-        if(!basicStockRepository.existsBySymbolIgnoreCase(ticker)){
+        BasicStockInformation basicStockInformation = basicStockRepository.findBySymbolIgnoreCase(ticker);
+        if(basicStockInformation == null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ticker cannot be bought.");
         }
         if(amountOfShares <= 0){
@@ -52,6 +62,8 @@ public class UserService {
         BigDecimal updatedPrice = user.getBalance().subtract(BigDecimal.valueOf(price));
         user.setBalance(updatedPrice);
         userRepository.save(user);
+        UserStock userStock = new UserStock(user,basicStockInformation,amountOfShares);
+        userStockRepository.save(userStock);
         return ResponseHandler.generateResponse("Success", "Purchase went through, total price spent: " + price + ".", HttpStatus.OK);
     }
 
@@ -59,5 +71,25 @@ public class UserService {
     private boolean hasFunds(double priceOfStock, int amountOfShares, Users users) {
         double price = priceOfStock * amountOfShares;
         return users.getBalance().compareTo(BigDecimal.valueOf(price)) > 0;
+    }
+
+    public ResponseEntity<Object> viewStocks(Principal principal) {
+        Users user = userRepository.findByUsername(principal.getName());
+        List<UserStock> foo = user.getStocks();
+        List<UserStockDTO> userStockDTOS = new ArrayList<>();
+        for(UserStock userStock: foo){
+            BasicStockInformation basicStockInformation = userStock.getBasicStockInformation();
+            StockStatsDTO stockStats = stockAPIService.getQuoteFromTicker(basicStockInformation.getSymbol());
+            double worth = Double.parseDouble(stockStats.getPrice()) * userStock.getQuantity();
+            userStockDTOS.add(new UserStockDTO(
+                    basicStockInformation.getSymbol(),
+                    basicStockInformation.getAssetType(),
+                    basicStockInformation.getName(),
+                    basicStockInformation.getExchange(),
+                    userStock.getQuantity(),
+                    worth
+            ));
+        }
+        return ResponseEntity.ok(userStockDTOS);
     }
 }

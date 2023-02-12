@@ -24,4 +24,9 @@ public class UserController {
     public ResponseEntity<Object> purchaseStock(@RequestBody StockPurchaseSheetDTO stockPurchaseSheetDTO,Principal principal){
         return userService.purchaseStock(stockPurchaseSheetDTO,principal);
     }
+
+    @GetMapping("/view/stocks")
+    public ResponseEntity<Object> viewStocks(Principal principal){
+        return userService.viewStocks(principal);
+    }
 }
