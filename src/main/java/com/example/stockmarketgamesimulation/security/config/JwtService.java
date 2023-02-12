@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,12 +18,25 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-    private static final String SECRET_KEY = "546A576D5A7134743777217A25432A462D4A614E645267556B58703272357538782F413F4428472B4B6250655368566D5971337436763979244226452948404D";
+    private final String SECRET_KEY;
+    private final EncryptionService encryptionService;
+    public JwtService(EncryptionService encryptionService) throws NoSuchAlgorithmException {
+        this.encryptionService = encryptionService;
+        SecureRandom secureRandom = SecureRandom.getInstanceStrong();
+        byte[] bytes = new byte[128];
+        secureRandom.nextBytes(bytes);
+        StringBuilder stringBuilder = new StringBuilder();
+        for(byte i: bytes){
+            stringBuilder.append(String.format("%02x",i));
+        }
+        SECRET_KEY = stringBuilder.toString();
+    }
     public String extractUsername(String jwtToken) {
         return extractClaim(jwtToken,Claims::getSubject);
     }
 
     public <T> T extractClaim(String jwtToken, Function<Claims,T> resolver){
+        jwtToken = encryptionService.decrypt(jwtToken);
         Claims claims = getAllClaims(jwtToken);
         return resolver.apply(claims);
     }
@@ -38,7 +53,7 @@ public class JwtService {
         return generateToken(new HashMap<>(),userDetails);
     }
     public String generateToken(Map<String,Object> claims, UserDetails userDetails){
-        return Jwts
+        String token = Jwts
                 .builder()
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
@@ -46,6 +61,7 @@ public class JwtService {
                 .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24))) // 1 day
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
+        return encryptionService.encrypt(token);
     }
     private Key getSignInKey() {
         byte[] bytes = Decoders.BASE64.decode(SECRET_KEY);
