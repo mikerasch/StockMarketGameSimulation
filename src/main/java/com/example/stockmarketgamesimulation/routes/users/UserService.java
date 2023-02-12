@@ -62,9 +62,23 @@ public class UserService {
         BigDecimal updatedPrice = user.getBalance().subtract(BigDecimal.valueOf(price));
         user.setBalance(updatedPrice);
         userRepository.save(user);
-        UserStock userStock = new UserStock(user,basicStockInformation,amountOfShares);
-        userStockRepository.save(userStock);
+        saveStockInformation(user,basicStockInformation,amountOfShares);
         return ResponseHandler.generateResponse("Success", "Purchase went through, total price spent: " + price + ".", HttpStatus.OK);
+    }
+
+    private void saveStockInformation(Users user, BasicStockInformation basicStockInformation, int amountOfShares) {
+        UserStock userStock = userStockRepository.findByUserIdAndStockId(user.getId(), basicStockInformation.getId());
+        if(userStock == null) {
+            userStock = new UserStock(user,basicStockInformation,amountOfShares);
+            userStockRepository.save(userStock);
+            return;
+        }
+        updateStockInformation(amountOfShares,userStock);
+    }
+
+    private void updateStockInformation(int amountOfShares, UserStock userStock) {
+        userStock.setQuantity(userStock.getQuantity() + amountOfShares);
+        userStockRepository.save(userStock);
     }
 
     // todo move logic to stockservice probably
