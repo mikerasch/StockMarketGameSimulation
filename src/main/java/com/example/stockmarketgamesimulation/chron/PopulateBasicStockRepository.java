@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
 
+//todo: DO NOT DELETE, UPDATE OR IT WILL MESS WITH THE JOINING TABLE BETWEEN USER AND STOCK
 @Configuration
 @EnableScheduling
 public class PopulateBasicStockRepository {

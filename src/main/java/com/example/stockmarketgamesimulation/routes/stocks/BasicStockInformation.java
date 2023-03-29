@@ -1,13 +1,14 @@
 package com.example.stockmarketgamesimulation.routes.stocks;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
+
+import java.util.List;
 
 @Data
 @Entity
+@ToString
 public class BasicStockInformation {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -19,4 +20,6 @@ public class BasicStockInformation {
     private String ipoDate;
     private String delistingDate;
     private String status;
+    @OneToMany(mappedBy = "basicStockInformation")
+    private List<UserStock> users;
 }

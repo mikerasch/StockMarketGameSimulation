@@ -1,10 +1,8 @@
 package com.example.stockmarketgamesimulation.routes.users;
 
+import com.example.stockmarketgamesimulation.routes.stocks.UserStock;
 import com.example.stockmarketgamesimulation.security.Roles;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,6 +28,10 @@ public class Users implements UserDetails {
     private String country;
     private BigDecimal balance;
     private int age;
+
+    @OneToMany(mappedBy = "user")
+    private List<UserStock> stocks;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(Roles.ROLE_USER.name()));
