@@ -22,7 +22,6 @@ public class WebSecurityConfig {
     private final UserDetailsImpl userDetails;
 
     public WebSecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, UserDetailsImpl userDetails) {
-        ;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.userDetails = userDetails;
     }

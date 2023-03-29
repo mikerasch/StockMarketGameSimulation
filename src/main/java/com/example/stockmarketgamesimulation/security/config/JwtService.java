@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +18,15 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-    private static final String SECRET_KEY = "546A576D5A7134743777217A25432A462D4A614E645267556B58703272357538782F413F4428472B4B6250655368566D5971337436763979244226452948404D";
+    private final String SECRET_KEY;
+
+    public JwtService(){
+        SecureRandom secureRandom = new SecureRandom();
+       byte[] bytes = secureRandom.generateSeed(64);
+       secureRandom.nextBytes(bytes);
+        Base64.Encoder encoder = Base64.getUrlEncoder().withoutPadding();
+        SECRET_KEY = encoder.encodeToString(bytes).replace("-","").replace("_","");
+    }
     public String extractUsername(String jwtToken) {
         return extractClaim(jwtToken,Claims::getSubject);
     }
