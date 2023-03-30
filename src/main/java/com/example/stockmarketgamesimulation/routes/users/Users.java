@@ -21,13 +21,9 @@ public class Users implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String username;
-    private String firstName;
-    private String lastName;
     private String password;
     private String email;
-    private String country;
     private BigDecimal balance;
-    private int age;
 
     @OneToMany(mappedBy = "user")
     private List<UserStock> stocks;

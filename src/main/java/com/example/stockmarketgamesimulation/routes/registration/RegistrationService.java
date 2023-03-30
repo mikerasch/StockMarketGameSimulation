@@ -31,12 +31,8 @@ public class RegistrationService {
         }
         Users users = new Users();
         users.setUsername(userDTO.getUsername());
-        users.setFirstName(userDTO.getFirstName());
-        users.setLastName(userDTO.getLastName());
         users.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         users.setEmail(userDTO.getEmail());
-        users.setCountry(userDTO.getCountry());
-        users.setAge(userDTO.getAge());
         users.setBalance(new BigDecimal(50000));
         userRepository.save(users);
         return ResponseHandler.generateResponse("Success","User added successfully",HttpStatus.OK);
