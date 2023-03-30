@@ -15,7 +15,7 @@ public class UserDetailsImpl implements UserDetailsService {
     }
     @Override
     public UserDetails loadUserByUsername(String username){
-        Users users = userRepository.findByUsername(username);
+        Users users = userRepository.findByEmail(username);
         if(users != null){
             return users;
         }

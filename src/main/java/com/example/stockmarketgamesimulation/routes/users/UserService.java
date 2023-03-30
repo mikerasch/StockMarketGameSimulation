@@ -34,7 +34,7 @@ public class UserService {
     }
     public ResponseEntity<Object> getCurrentBalance(Principal principal) {
         String username = principal.getName();
-        Users user = userRepository.findByUsername(username);
+        Users user = userRepository.findByEmail(username);
         BigDecimal balance = user.getBalance();
         return ResponseHandler.generateResponse("Success", balance.toString(), HttpStatus.OK);
     }
@@ -51,7 +51,7 @@ public class UserService {
         }
 
         double priceOfStock = Double.parseDouble(stockAPIService.getQuoteFromTicker(ticker).getPrice());
-        Users user = userRepository.findByUsername(principal.getName());
+        Users user = userRepository.findByEmail(principal.getName());
 
         boolean canPurchase = hasFunds(priceOfStock,amountOfShares, user);
         if(!canPurchase){
@@ -88,7 +88,7 @@ public class UserService {
     }
 
     public ResponseEntity<Object> viewStocks(Principal principal) {
-        Users user = userRepository.findByUsername(principal.getName());
+        Users user = userRepository.findByEmail(principal.getName());
         List<UserStock> foo = user.getStocks();
         List<UserStockDTO> userStockDTOS = new ArrayList<>();
         for(UserStock userStock: foo){
