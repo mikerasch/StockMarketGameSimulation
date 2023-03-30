@@ -23,7 +23,7 @@ public class PopulateBasicStockRepository {
 
     @PostConstruct
     public void populateOnStartup(){
-        populateBasicStockRepo();
+      //  populateBasicStockRepo();
     }
     @Scheduled(cron = "0 0 0 * * ?")
     public void populateEveryDayAtMidnight(){
