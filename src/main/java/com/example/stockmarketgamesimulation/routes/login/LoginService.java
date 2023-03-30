@@ -1,6 +1,7 @@
 package com.example.stockmarketgamesimulation.routes.login;
 
 import com.example.stockmarketgamesimulation.repo.UserRepository;
+import com.example.stockmarketgamesimulation.routes.users.UserLoginDTO;
 import com.example.stockmarketgamesimulation.routes.users.Users;
 import com.example.stockmarketgamesimulation.security.config.JwtService;
 import com.example.stockmarketgamesimulation.utility.ResponseHandler;
@@ -21,9 +22,9 @@ public class LoginService {
         this.jwtService = jwtService;
     }
 
-    public ResponseEntity<Object> authorizeAccount(String username, String password) {
-        Users user = userRepository.findByUsername(username);
-        if(user == null || !passwordEncoder.matches(password,user.getPassword())){
+    public ResponseEntity<Object> authorizeAccount(UserLoginDTO userLoginDTO) {
+        Users user = userRepository.findByEmail(userLoginDTO.getEmail());
+        if(user == null || !passwordEncoder.matches(userLoginDTO.getPassword(), user.getPassword())){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         String jwtToken = jwtService.generateToken(user);
