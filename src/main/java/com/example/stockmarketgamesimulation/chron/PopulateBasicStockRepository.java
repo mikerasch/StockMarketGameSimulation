@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.util.List;
 
 //todo: DO NOT DELETE, UPDATE OR IT WILL MESS WITH THE JOINING TABLE BETWEEN USER AND STOCK
+//todo: Very big problem this class brings, will have to think of a better way to do it
 @Configuration
 @EnableScheduling
 public class PopulateBasicStockRepository {
@@ -23,7 +24,7 @@ public class PopulateBasicStockRepository {
 
     @PostConstruct
     public void populateOnStartup(){
-      //  populateBasicStockRepo();
+       // populateBasicStockRepo();
     }
     @Scheduled(cron = "0 0 0 * * ?")
     public void populateEveryDayAtMidnight(){

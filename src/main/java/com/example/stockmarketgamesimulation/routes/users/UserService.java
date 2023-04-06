@@ -12,6 +12,7 @@ import com.example.stockmarketgamesimulation.routes.stocks.UserStock;
 import com.example.stockmarketgamesimulation.utility.ResponseHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -32,16 +33,15 @@ public class UserService {
         this.stockAPIService = stockAPIService;
         this.userStockRepository = userStockRepository;
     }
-    public ResponseEntity<Object> getCurrentBalance(Principal principal) {
-        String username = principal.getName();
-        Users user = userRepository.findByEmail(username);
+    public ResponseEntity<Object> getCurrentBalance(UserDetails userService) {
+        Users user = userRepository.findByEmail(userService.getUsername());
         BigDecimal balance = user.getBalance();
         return ResponseHandler.generateResponse("Success", balance.toString(), HttpStatus.OK);
     }
 
     public ResponseEntity<Object> purchaseStock(StockPurchaseSheetDTO stockPurchaseSheetDTO,Principal principal) {
-        String ticker = stockPurchaseSheetDTO.getTicker();
-        int amountOfShares = Integer.parseInt(stockPurchaseSheetDTO.getAmountOfShares());
+        String ticker = stockPurchaseSheetDTO.ticker();
+        int amountOfShares = Integer.parseInt(stockPurchaseSheetDTO.amountOfShares());
         BasicStockInformation basicStockInformation = basicStockRepository.findBySymbolIgnoreCase(ticker);
         if(basicStockInformation == null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ticker cannot be bought.");

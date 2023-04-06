@@ -1,10 +1,3 @@
 package com.example.stockmarketgamesimulation.dto;
 
-import lombok.Data;
-
-@Data
-public class UserDTO {
-    private String email;
-    private String username;
-    private String password;
-}
+public record UserDTO(String email, String username, String password) {}

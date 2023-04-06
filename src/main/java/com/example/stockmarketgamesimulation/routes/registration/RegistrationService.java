@@ -22,17 +22,17 @@ public class RegistrationService {
         this.passwordEncoder = passwordEncoder;
     }
     public ResponseEntity<Object> registerNewUser(UserDTO userDTO) {
-        if(userRepository.existsByUsername(userDTO.getUsername())){
+        if(userRepository.existsByUsername(userDTO.username())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Username is already taken.");
         }
 
-        if(userRepository.existsByEmail(userDTO.getEmail())){
+        if(userRepository.existsByEmail(userDTO.email())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Email is already taken.");
         }
         Users users = new Users();
-        users.setUsername(userDTO.getUsername());
-        users.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        users.setEmail(userDTO.getEmail());
+        users.setUsername(userDTO.username());
+        users.setPassword(passwordEncoder.encode(userDTO.password()));
+        users.setEmail(userDTO.email());
         users.setBalance(new BigDecimal(50000));
         userRepository.save(users);
         return ResponseHandler.generateResponse("Success","User added successfully",HttpStatus.OK);

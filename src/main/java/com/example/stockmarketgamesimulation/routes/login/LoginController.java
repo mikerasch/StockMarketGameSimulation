@@ -1,5 +1,6 @@
 package com.example.stockmarketgamesimulation.routes.login;
 
+import com.example.stockmarketgamesimulation.dto.UserLoginRequestDTO;
 import com.example.stockmarketgamesimulation.routes.users.UserLoginDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +13,7 @@ public class LoginController {
         this.loginService = loginService;
     }
     @PostMapping
-    public ResponseEntity<Object> authorizeAccount(@RequestBody UserLoginDTO userLoginDTO){
+    public ResponseEntity<UserLoginRequestDTO> authorizeAccount(@RequestBody UserLoginDTO userLoginDTO){
         return loginService.authorizeAccount(userLoginDTO);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.stockmarketgamesimulation.security.config;
 
+import com.example.stockmarketgamesimulation.routes.users.Users;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -49,14 +50,14 @@ public class JwtService {
                 .getBody();
     }
 
-    public String generateToken(UserDetails userDetails){
+    public String generateToken(Users userDetails){
         return generateToken(new HashMap<>(),userDetails);
     }
-    public String generateToken(Map<String,Object> claims, UserDetails userDetails){
+    public String generateToken(Map<String,Object> claims, Users userDetails){
         String token = Jwts
                 .builder()
                 .setClaims(claims)
-                .setSubject(userDetails.getUsername())
+                .setSubject(userDetails.getEmail())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24))) // 1 day
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
@@ -67,9 +68,8 @@ public class JwtService {
         byte[] bytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(bytes);
     }
-    public boolean isTokenValid(String token, UserDetails userDetails){
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    public boolean isTokenValid(String token){
+        return !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {

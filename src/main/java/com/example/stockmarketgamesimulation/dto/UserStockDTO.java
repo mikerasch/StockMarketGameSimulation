@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class UserStockDTO {
-    private String Ticker;
+    private String ticker;
     private String assetType;
     private String companyName;
     private String exchange;

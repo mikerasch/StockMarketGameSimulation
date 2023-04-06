@@ -2,6 +2,8 @@ package com.example.stockmarketgamesimulation.routes.stocks;
 
 import com.example.stockmarketgamesimulation.dto.StockStatsDTO;
 import com.example.stockmarketgamesimulation.repo.BasicStockRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,8 +19,8 @@ public class StockService {
         this.basicStockRepository = basicStockRepository;
         this.stockAPIService = stockAPIService;
     }
-    public ResponseEntity<List<BasicStockInformation>> getAllListings() {
-        List<BasicStockInformation> basicStockInformationList = basicStockRepository.findAll();
+    public ResponseEntity<Page<BasicStockInformation>> getAllListingsWithPagination(int page,int size ) {
+        Page<BasicStockInformation> basicStockInformationList = basicStockRepository.findAll(PageRequest.of(page,size));
         return new ResponseEntity<>(basicStockInformationList,HttpStatus.OK);
     }
 
@@ -28,5 +30,10 @@ public class StockService {
         }
         StockStatsDTO result = stockAPIService.getQuoteFromTicker(ticker);
         return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+    public ResponseEntity<List<BasicStockInformation>> getStocksSimilar(String ticker) {
+        List<BasicStockInformation> basicStockInformationList = basicStockRepository.findFirst10BySymbolIsContainingIgnoreCase(ticker);
+        return ResponseEntity.ok(basicStockInformationList);
     }
 }

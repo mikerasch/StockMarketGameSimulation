@@ -1,10 +1,10 @@
 package com.example.stockmarketgamesimulation.routes.login;
 
+import com.example.stockmarketgamesimulation.dto.UserLoginRequestDTO;
 import com.example.stockmarketgamesimulation.repo.UserRepository;
 import com.example.stockmarketgamesimulation.routes.users.UserLoginDTO;
 import com.example.stockmarketgamesimulation.routes.users.Users;
 import com.example.stockmarketgamesimulation.security.config.JwtService;
-import com.example.stockmarketgamesimulation.utility.ResponseHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,12 +22,14 @@ public class LoginService {
         this.jwtService = jwtService;
     }
 
-    public ResponseEntity<Object> authorizeAccount(UserLoginDTO userLoginDTO) {
+    public ResponseEntity<UserLoginRequestDTO> authorizeAccount(UserLoginDTO userLoginDTO) {
         Users user = userRepository.findByEmail(userLoginDTO.getEmail());
         if(user == null || !passwordEncoder.matches(userLoginDTO.getPassword(), user.getPassword())){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         String jwtToken = jwtService.generateToken(user);
-        return ResponseHandler.generateResponse("Success",jwtToken,HttpStatus.OK);
+        return ResponseEntity.ok(
+                new UserLoginRequestDTO(jwtToken, user.getUsername(), user.getEmail())
+        );
     }
 }
