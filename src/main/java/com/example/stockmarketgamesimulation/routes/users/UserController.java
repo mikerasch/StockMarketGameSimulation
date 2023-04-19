@@ -1,6 +1,8 @@
 package com.example.stockmarketgamesimulation.routes.users;
 
+import com.example.stockmarketgamesimulation.dto.ProfileChangeRequestDTO;
 import com.example.stockmarketgamesimulation.dto.StockPurchaseSheetDTO;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,5 +36,11 @@ public class UserController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Object> viewStocks(Principal principal){
         return userService.viewStocks(principal);
+    }
+
+    @PostMapping("/update/user")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<String> updateUser(@RequestBody ProfileChangeRequestDTO profileChangeRequestDTO, @AuthenticationPrincipal UserDetails userDetails) {
+        return userService.updateRequest(profileChangeRequestDTO, userDetails);
     }
 }

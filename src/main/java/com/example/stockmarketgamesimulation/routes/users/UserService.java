@@ -1,5 +1,6 @@
 package com.example.stockmarketgamesimulation.routes.users;
 
+import com.example.stockmarketgamesimulation.dto.ProfileChangeRequestDTO;
 import com.example.stockmarketgamesimulation.dto.StockPurchaseSheetDTO;
 import com.example.stockmarketgamesimulation.dto.StockStatsDTO;
 import com.example.stockmarketgamesimulation.dto.UserStockDTO;
@@ -12,6 +13,7 @@ import com.example.stockmarketgamesimulation.routes.stocks.UserStock;
 import com.example.stockmarketgamesimulation.utility.ResponseHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -105,5 +107,29 @@ public class UserService {
             ));
         }
         return ResponseEntity.ok(userStockDTOS);
+    }
+
+    public ResponseEntity<String> updateRequest(ProfileChangeRequestDTO profileChangeRequestDTO, UserDetails userDetails) {
+        Users user = null;
+        if(!userDetails.getUsername().equals(profileChangeRequestDTO.email())) {
+            user = changeEmail(profileChangeRequestDTO);
+        }
+        return changeUsername(profileChangeRequestDTO, user);
+    }
+
+    private ResponseEntity<String> changeUsername(ProfileChangeRequestDTO profileChangeRequestDTO, Users user) {
+        user.setUsername(profileChangeRequestDTO.username());
+        userRepository.save(user);
+        return ResponseEntity.ok("Changed profile successfully");
+    }
+
+    private Users changeEmail(ProfileChangeRequestDTO profileChangeRequestDTO) {
+        Users user = userRepository.findByEmail(profileChangeRequestDTO.email());
+        if(user != null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Could not update user information");
+        }
+
+        user.setEmail(profileChangeRequestDTO.email());
+        return user;
     }
 }

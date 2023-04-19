@@ -12,6 +12,7 @@ public class LoginController {
     public LoginController(LoginService loginService){
         this.loginService = loginService;
     }
+
     @PostMapping
     public ResponseEntity<UserLoginRequestDTO> authorizeAccount(@RequestBody UserLoginDTO userLoginDTO){
         return loginService.authorizeAccount(userLoginDTO);
