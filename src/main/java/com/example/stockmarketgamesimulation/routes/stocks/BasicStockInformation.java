@@ -1,5 +1,6 @@
 package com.example.stockmarketgamesimulation.routes.stocks;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
@@ -20,6 +21,7 @@ public class BasicStockInformation {
     private String ipoDate;
     private String delistingDate;
     private String status;
-    @OneToMany(mappedBy = "basicStockInformation")
+    @OneToMany(mappedBy = "basicStockInformation", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<UserStock> users;
 }
