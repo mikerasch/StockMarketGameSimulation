@@ -142,7 +142,12 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error: Trying to sell more shares as compared to what you own");
         }
         userStock.setQuantity(userStock.getQuantity() - stockSellSheetDTO.getAmount());
-        userStockRepository.save(userStock);
+        if(userStock.getQuantity() <= 0) {
+            userStockRepository.delete(userStock);
+        }
+        else {
+            userStockRepository.save(userStock);
+        }
         user.setBalance(user.getBalance().add(totalPriceOfTransaction));
         userRepository.save(user);
         return ResponseEntity.ok("Successfully sold stock");
