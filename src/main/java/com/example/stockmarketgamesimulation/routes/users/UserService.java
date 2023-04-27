@@ -143,7 +143,7 @@ public class UserService {
         }
         userStock.setQuantity(userStock.getQuantity() - stockSellSheetDTO.getAmount());
         userStockRepository.save(userStock);
-        user.setBalance(user.getBalance().subtract(totalPriceOfTransaction));
+        user.setBalance(user.getBalance().add(totalPriceOfTransaction));
         userRepository.save(user);
         return ResponseEntity.ok("Successfully sold stock");
     }
