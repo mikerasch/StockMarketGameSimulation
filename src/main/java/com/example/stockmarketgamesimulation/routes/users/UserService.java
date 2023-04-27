@@ -137,10 +137,10 @@ public class UserService {
         StockStatsDTO statsDTO = stockAPIService.getQuoteFromTicker(stockSellSheetDTO.getTicker());
         BigDecimal priceOfStock = BigDecimal.valueOf(Double.parseDouble(statsDTO.getPrice()));
         BigDecimal totalPriceOfTransaction = priceOfStock.multiply(BigDecimal.valueOf(stockSellSheetDTO.getAmount()));
-        if(totalPriceOfTransaction.compareTo(user.getBalance()) < 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough funds!");
-        }
         UserStock userStock = userStockRepository.findByUserId(user.getId());
+        if(stockSellSheetDTO.getAmount() > userStock.getQuantity()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error: Trying to sell more shares as compared to what you own");
+        }
         userStock.setQuantity(userStock.getQuantity() - stockSellSheetDTO.getAmount());
         userStockRepository.save(userStock);
         user.setBalance(user.getBalance().subtract(totalPriceOfTransaction));
