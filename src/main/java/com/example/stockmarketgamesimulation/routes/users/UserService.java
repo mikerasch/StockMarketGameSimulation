@@ -1,9 +1,6 @@
 package com.example.stockmarketgamesimulation.routes.users;
 
-import com.example.stockmarketgamesimulation.dto.ProfileChangeRequestDTO;
-import com.example.stockmarketgamesimulation.dto.StockPurchaseSheetDTO;
-import com.example.stockmarketgamesimulation.dto.StockStatsDTO;
-import com.example.stockmarketgamesimulation.dto.UserStockDTO;
+import com.example.stockmarketgamesimulation.dto.*;
 import com.example.stockmarketgamesimulation.repo.BasicStockRepository;
 import com.example.stockmarketgamesimulation.repo.UserRepository;
 import com.example.stockmarketgamesimulation.repo.UserStockRepository;
@@ -13,7 +10,6 @@ import com.example.stockmarketgamesimulation.routes.stocks.UserStock;
 import com.example.stockmarketgamesimulation.utility.ResponseHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -131,5 +127,24 @@ public class UserService {
 
         user.setEmail(profileChangeRequestDTO.email());
         return user;
+    }
+
+    public ResponseEntity<String> sellStock(StockSellSheetDTO stockSellSheetDTO, UserDetails userDetails) {
+        Users user = userRepository.findByEmail(userDetails.getUsername());
+        if(user == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Could not sell stock!");
+        }
+        StockStatsDTO statsDTO = stockAPIService.getQuoteFromTicker(stockSellSheetDTO.getTicker());
+        BigDecimal priceOfStock = BigDecimal.valueOf(Double.parseDouble(statsDTO.getPrice()));
+        BigDecimal totalPriceOfTransaction = priceOfStock.multiply(BigDecimal.valueOf(stockSellSheetDTO.getAmount()));
+        if(totalPriceOfTransaction.compareTo(user.getBalance()) < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough funds!");
+        }
+        UserStock userStock = userStockRepository.findByUserId(user.getId());
+        userStock.setQuantity(userStock.getQuantity() - stockSellSheetDTO.getAmount());
+        userStockRepository.save(userStock);
+        user.setBalance(user.getBalance().subtract(totalPriceOfTransaction));
+        userRepository.save(user);
+        return ResponseEntity.ok("Successfully sold stock");
     }
 }

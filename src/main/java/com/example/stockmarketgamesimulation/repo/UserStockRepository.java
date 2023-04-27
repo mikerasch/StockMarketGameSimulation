@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface UserStockRepository extends JpaRepository<UserStock,Long> {
     @Query("SELECT us FROM UserStock us WHERE us.user.id =:userId AND us.basicStockInformation.id =:stockId")
     UserStock findByUserIdAndStockId(@Param("userId") Long userId, @Param("stockId") Long stockId);
+
+    UserStock findByUserId(long id);
 }
